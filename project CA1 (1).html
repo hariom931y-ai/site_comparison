@@ -1,0 +1,1185 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-slate-50">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EstateVue - Modern Property Discovery & Comparison Platform</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f7ff',
+                            100: '#e0effe',
+                            500: '#0284c7',
+                            600: '#0369a1',
+                            800: '#075985',
+                            900: '#0c4a6e',
+                        },
+                        navy: {
+                            800: '#1e293b',
+                            900: '#0f172a',
+                            950: '#020617',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Font Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Custom scrollbar & visual refinements */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+        }
+        .badge-chip {
+            transition: all 0.2s ease;
+        }
+        .badge-chip.active {
+            background-color: #0284c7;
+            color: #ffffff;
+            border-color: #0284c7;
+        }
+    </style>
+</head>
+<body class="h-full font-sans text-slate-800 antialiased flex flex-col min-h-screen">
+
+    <!-- TOP NAVIGATION -->
+    <header class="sticky top-0 z-30 bg-navy-900 text-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Brand Logo -->
+                <div class="flex items-center space-x-3 cursor-pointer" onclick="showSection('listings')">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-500 to-teal-400 flex items-center justify-center text-white shadow-md">
+                        <i class="fa-solid font-bold fa-building-user text-xl"></i>
+                    </div>
+                    <div>
+                        <span class="text-xl font-bold tracking-tight bg-gradient-to-r from-white via-slate-100 to-slate-300 bg-clip-text text-transparent">CompareKaro</span>
+                        <span class="hidden sm:inline-block text-xs text-brand-500 font-medium ml-2 px-2 py-0.5 bg-brand-500/10 rounded-full border border-brand-500/20">Discovery & Compare</span>
+                    </div>
+                </div>
+
+                <!-- Nav Controls / Badges -->
+                <div class="flex items-center space-x-2 sm:space-x-4">
+                    <!-- Favorites Link -->
+                    <button onclick="showSection('favorites')" class="relative flex items-center space-x-2 px-3 py-2 rounded-lg text-slate-200 hover:text-white hover:bg-slate-800 transition">
+                        <i class="fa-solid fa-heart text-rose-500"></i>
+                        <span class="hidden md:inline font-medium text-sm">Saved</span>
+                        <span id="fav-count" class="bg-rose-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">0</span>
+                    </button>
+
+                    <!-- Compare Tray Toggle Button -->
+                    <button onclick="toggleCompareBar()" class="relative flex items-center space-x-2 px-3 py-2 rounded-lg bg-brand-600 hover:bg-brand-500 text-white transition shadow-sm">
+                        <i class="fa-solid fa-code-compare"></i>
+                        <span class="hidden sm:inline font-medium text-sm">Compare</span>
+                        <span id="compare-count" class="bg-white text-brand-800 text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">0</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- HERO SEARCH & PROBLEM STATEMENT BANNER -->
+    <div class="bg-gradient-to-b from-navy-900 to-slate-800 text-white pt-8 pb-12 px-4 sm:px-6 lg:px-8 border-b border-slate-700">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                <!-- Text Header -->
+                <div class="lg:col-span-7 space-y-3">
+                    <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-brand-500/10 border border-brand-500/30 text-brand-100 text-xs font-medium">
+                        <i class="fa-solid fa-bullseye text-brand-500"></i>
+                        <span>Solving Scattered Listings</span>
+                    </div>
+                    <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white leading-tight">
+                        Find & Compare Properties Side-by-Side
+                    </h1>
+                    <p class="text-slate-300 text-sm sm:text-base max-w-2xl">
+                        Eliminate the frustration of scattered property details. Filter, save, and evaluate homes using our unified comparison matrix.
+                    </p>
+                </div>
+
+                <!-- Quick Overview Stats -->
+                <div class="lg:col-span-5 grid grid-cols-3 gap-3 bg-slate-800/60 p-4 rounded-2xl border border-slate-700/60 backdrop-blur-sm">
+                    <div class="text-center p-2">
+                        <p class="text-2xl sm:text-3xl font-bold text-brand-100" id="total-listed-count">0</p>
+                        <p class="text-xs text-slate-400">Listings</p>
+                    </div>
+                    <div class="text-center p-2 border-x border-slate-700">
+                        <p class="text-2xl sm:text-3xl font-bold text-teal-300">4 Max</p>
+                        <p class="text-xs text-slate-400">Comparison</p>
+                    </div>
+                    <div class="text-center p-2">
+                        <p class="text-2xl sm:text-3xl font-bold text-amber-300">100%</p>
+                        <p class="text-xs text-slate-400">Transparent</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Global Search Bar -->
+            <div class="mt-8 bg-white p-3 sm:p-4 rounded-2xl shadow-xl text-slate-800 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-3 items-center">
+                <div class="lg:col-span-4 relative">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-3.5 text-slate-400"></i>
+                    <input type="text" id="search-keyword" oninput="applyFilters()" placeholder="Search by title, keyword, city, address..." 
+                        class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm">
+                </div>
+                <div class="lg:col-span-3">
+                    <select id="filter-location" onchange="applyFilters()" class="w-full py-2.5 px-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm bg-slate-50">
+                        <option value="all">All Locations</option>
+                        <option value="New York, NY">New York, NY</option>
+                        <option value="India, IN">India, IN</option>
+                        <option value="Austin, TX">Austin, TX</option>
+                        <option value="Los Angeles, CA">Los Angeles, CA</option>
+                        <option value="Seattle, WA">Seattle, WA</option>
+                    </select>
+                </div>
+                <div class="lg:col-span-3">
+                    <select id="filter-type" onchange="applyFilters()" class="w-full py-2.5 px-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm bg-slate-50">
+                        <option value="all">All Property Types</option>
+                        <option value="Single Family">Single Family Home</option>
+                        <option value="Luxury Condominium">Luxury Condominium</option>
+                        <option value="Penthouse">Penthouse</option>
+                        <option value="Modern Villa">Modern Villa</option>
+                        <option value="Townhouse">Townhouse</option>
+                    </select>
+                </div>
+                <div class="lg:col-span-2 flex space-x-2">
+                    <button onclick="resetFilters()" class="w-full py-2.5 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl text-sm transition flex items-center justify-center space-x-1">
+                        <i class="fa-solid fa-rotate-left"></i>
+                        <span>Reset</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT AREA -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        <!-- SECTION SWITCHER TABS -->
+        <div class="flex items-center justify-between border-b border-slate-200 pb-4 mb-6">
+            <div class="flex space-x-2 sm:space-x-4">
+                <button id="tab-listings" onclick="showSection('listings')" class="px-4 py-2 font-semibold text-sm rounded-lg text-brand-600 bg-brand-50 border border-brand-200 transition">
+                    <i class="fa-solid fa-border-all mr-1.5"></i> All Listings
+                </button>
+                <button id="tab-comparison" onclick="showSection('comparison')" class="px-4 py-2 font-semibold text-sm rounded-lg text-slate-600 hover:bg-slate-100 transition relative">
+                    <i class="fa-solid fa-arrows-split-up-and-left mr-1.5"></i> Comparison Matrix
+                    <span id="tab-compare-badge" class="hidden ml-1 px-1.5 py-0.5 bg-brand-600 text-white rounded-full text-xs">0</span>
+                </button>
+                <button id="tab-favorites" onclick="showSection('favorites')" class="px-4 py-2 font-semibold text-sm rounded-lg text-slate-600 hover:bg-slate-100 transition">
+                    <i class="fa-solid fa-heart mr-1.5 text-rose-500"></i> Bookmarks
+                </button>
+            </div>
+            
+            <div class="hidden md:flex items-center space-x-2 text-sm text-slate-500">
+                <span>Sort By:</span>
+                <select id="sort-order" onchange="applyFilters()" class="border border-slate-200 rounded-lg px-2 py-1 text-sm bg-white focus:outline-none focus:ring-1 focus:ring-brand-500">
+                    <option value="featured">Featured First</option>
+                    <option value="price-asc">Price: Low to High</option>
+                    <option value="price-desc">Price: High to Low</option>
+                    <option value="size-desc">Size: Largest First</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- VIEW 1: PROPERTY LISTINGS & SIDEBAR FILTERS -->
+        <div id="section-listings" class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            
+            <!-- ADVANCED FILTER SIDEBAR -->
+            <aside class="lg:col-span-3 space-y-6 bg-white p-5 rounded-2xl border border-slate-200 shadow-sm h-fit">
+                <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                    <h3 class="font-bold text-slate-800 text-base flex items-center">
+                        <i class="fa-solid fa-sliders text-brand-600 mr-2"></i> Refine Search
+                    </h3>
+                    <span id="results-count" class="text-xs font-semibold px-2 py-0.5 bg-slate-100 rounded-full text-slate-600">0 found</span>
+                </div>
+
+                <!-- Price Range Filter -->
+                <div class="space-y-2">
+                    <label class="text-xs font-bold text-slate-700 uppercase tracking-wider">Max Price ($)</label>
+                    <div class="flex items-center justify-between text-sm font-semibold text-brand-600">
+                        <span>$500k</span>
+                        <span id="price-val-display">$15,000,000</span>
+                    </div>
+                    <input type="range" id="filter-max-price" min="500000" max="15000000" step="250000" value="15000000" oninput="updatePriceLabel(this.value); applyFilters()" class="w-full accent-brand-600 cursor-pointer">
+                </div>
+
+                <!-- Bedrooms Filter -->
+                <div class="space-y-2">
+                    <label class="text-xs font-bold text-slate-700 uppercase tracking-wider">Bedrooms</label>
+                    <div class="grid grid-cols-5 gap-1" id="bed-buttons">
+                        <button onclick="setBedsFilter('any')" class="bed-btn badge-chip active py-1.5 rounded-lg border text-xs font-medium text-center">Any</button>
+                        <button onclick="setBedsFilter('2')" class="bed-btn badge-chip py-1.5 rounded-lg border text-xs font-medium text-center">2+</button>
+                        <button onclick="setBedsFilter('3')" class="bed-btn badge-chip py-1.5 rounded-lg border text-xs font-medium text-center">3+</button>
+                        <button onclick="setBedsFilter('4')" class="bed-btn badge-chip py-1.5 rounded-lg border text-xs font-medium text-center">4+</button>
+                        <button onclick="setBedsFilter('5')" class="bed-btn badge-chip py-1.5 rounded-lg border text-xs font-medium text-center">5+</button>
+                    </div>
+                </div>
+
+                <!-- Minimum SqFt -->
+                <div class="space-y-2">
+                    <label class="text-xs font-bold text-slate-700 uppercase tracking-wider">Min Area (Sq Ft)</label>
+                    <select id="filter-min-size" onchange="applyFilters()" class="w-full py-2 px-3 rounded-xl border border-slate-200 text-sm bg-slate-50 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                        <option value="0">Any Size</option>
+                        <option value="1500">1,500+ sq ft</option>
+                        <option value="2500">2,500+ sq ft</option>
+                        <option value="4000">4,000+ sq ft</option>
+                        <option value="6000">6,000+ sq ft</option>
+                    </select>
+                </div>
+
+                <!-- Amenities Checklist -->
+                <div class="space-y-2">
+                    <label class="text-xs font-bold text-slate-700 uppercase tracking-wider">Amenities</label>
+                    <div class="space-y-2 text-sm text-slate-600 max-h-48 overflow-y-auto pr-1">
+                        <label class="flex items-center space-x-2 cursor-pointer">
+                            <input type="checkbox" value="Swimming Pool" onchange="applyFilters()" class="amenity-checkbox rounded text-brand-600 focus:ring-brand-500">
+                            <span>Swimming Pool</span>
+                        </label>
+                        <label class="flex items-center space-x-2 cursor-pointer">
+                            <input type="checkbox" value="Private Garden" onchange="applyFilters()" class="amenity-checkbox rounded text-brand-600 focus:ring-brand-500">
+                            <span>Private Garden</span>
+                        </label>
+                        <label class="flex items-center space-x-2 cursor-pointer">
+                            <input type="checkbox" value="Smart Home Automation" onchange="applyFilters()" class="amenity-checkbox rounded text-brand-600 focus:ring-brand-500">
+                            <span>Smart Home Tech</span>
+                        </label>
+                        <label class="flex items-center space-x-2 cursor-pointer">
+                            <input type="checkbox" value="Ocean View" onchange="applyFilters()" class="amenity-checkbox rounded text-brand-600 focus:ring-brand-500">
+                            <span>Ocean View</span>
+                        </label>
+                        <label class="flex items-center space-x-2 cursor-pointer">
+                            <input type="checkbox" value="Private Garage" onchange="applyFilters()" class="amenity-checkbox rounded text-brand-600 focus:ring-brand-500">
+                            <span>Private Garage</span>
+                        </label>
+                        <label class="flex items-center space-x-2 cursor-pointer">
+                            <input type="checkbox" value="Fitness Gym" onchange="applyFilters()" class="amenity-checkbox rounded text-brand-600 focus:ring-brand-500">
+                            <span>Fitness Gym</span>
+                        </label>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- PROPERTY CARDS GRID -->
+            <section class="lg:col-span-9">
+                <div id="listings-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Dynamic Property Cards will be rendered here -->
+                </div>
+                <!-- Empty State -->
+                <div id="no-results" class="hidden text-center py-16 bg-white rounded-2xl border border-slate-200">
+                    <i class="fa-solid fa-house-circle-xmark text-4xl text-slate-300 mb-3"></i>
+                    <h3 class="text-lg font-bold text-slate-700">No properties found</h3>
+                    <p class="text-sm text-slate-500 max-w-sm mx-auto mt-1">Try broadening your search or adjusting your price and amenity filters.</p>
+                    <button onclick="resetFilters()" class="mt-4 px-4 py-2 bg-brand-600 text-white rounded-xl text-sm font-semibold hover:bg-brand-500">Reset All Filters</button>
+                </div>
+            </section>
+        </div>
+
+        <!-- VIEW 2: SIDE-BY-SIDE COMPARISON MATRIX -->
+        <div id="section-comparison" class="hidden space-y-6">
+            <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-900">Property Comparison Matrix</h2>
+                    <p class="text-slate-500 text-sm">Compare up to 4 selected properties side-by-side to evaluate specifications, pricing, and features.</p>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <button onclick="clearComparison()" class="px-3 py-2 border border-slate-300 hover:bg-slate-100 rounded-xl text-xs font-semibold text-slate-700 transition">
+                        <i class="fa-solid fa-trash mr-1"></i> Clear Selection
+                    </button>
+                    <button onclick="showSection('listings')" class="px-4 py-2 bg-brand-600 hover:bg-brand-500 text-white rounded-xl text-xs font-semibold transition">
+                        <i class="fa-solid fa-plus mr-1"></i> Add More Properties
+                    </button>
+                </div>
+            </div>
+
+            <!-- Comparison Table Container -->
+            <div id="comparison-matrix-container" class="overflow-x-auto bg-white rounded-2xl border border-slate-200 shadow-sm">
+                <!-- Dynamic Comparison Table Generated Here -->
+            </div>
+        </div>
+
+        <!-- VIEW 3: BOOKMARKED / FAVORITES -->
+        <div id="section-favorites" class="hidden space-y-6">
+            <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                <h2 class="text-2xl font-bold text-slate-900">Your Bookmarked Properties</h2>
+                <p class="text-slate-500 text-sm">Quick access to all homes you've saved for later evaluation.</p>
+            </div>
+            <div id="favorites-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Bookmarked properties appear here -->
+            </div>
+            <div id="empty-favorites" class="hidden text-center py-16 bg-white rounded-2xl border border-slate-200">
+                <i class="fa-regular fa-heart text-4xl text-slate-300 mb-3"></i>
+                <h3 class="text-lg font-bold text-slate-700">No saved properties yet</h3>
+                <p class="text-sm text-slate-500 max-w-sm mx-auto mt-1">Click the heart icon on any property card to save it here.</p>
+                <button onclick="showSection('listings')" class="mt-4 px-4 py-2 bg-brand-600 text-white rounded-xl text-sm font-semibold hover:bg-brand-500">Browse Properties</button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- BOTTOM FLOATING COMPARISON DOCK BAR -->
+    <div id="compare-dock" class="fixed bottom-4 left-1/2 -translate-x-1/2 z-40 w-11/12 max-w-4xl bg-navy-900/95 backdrop-blur-md text-white rounded-2xl p-4 shadow-2xl border border-slate-700 transition-all transform translate-y-32 opacity-0 pointer-events-none">
+        <div class="flex items-center justify-between mb-3">
+            <div class="flex items-center space-x-2">
+                <i class="fa-solid fa-code-compare text-brand-500"></i>
+                <span class="font-bold text-sm">Comparison Dock (<span id="dock-count">0</span>/4 selected)</span>
+            </div>
+            <div class="flex items-center space-x-3">
+                <button onclick="showSection('comparison')" class="px-4 py-1.5 bg-brand-600 hover:bg-brand-500 text-white font-semibold text-xs rounded-xl transition shadow">
+                    Launch Comparison Matrix
+                </button>
+                <button onclick="toggleCompareBar(false)" class="text-slate-400 hover:text-white text-lg">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+        </div>
+        <div id="dock-thumbnails" class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <!-- Dynamic Dock Thumbnails -->
+        </div>
+    </div>
+
+    <!-- PROPERTY DETAIL & GALLERY MODAL -->
+    <div id="detail-modal" class="fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-sm flex items-center justify-center p-4 hidden opacity-0 transition-opacity">
+        <div class="bg-white w-full max-w-4xl rounded-2xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col">
+            <!-- Modal Header -->
+            <div class="px-6 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
+                <div>
+                    <h3 id="modal-title" class="text-xl font-bold text-slate-900">Property Title</h3>
+                    <p id="modal-location" class="text-xs text-slate-500 flex items-center mt-0.5">
+                        <i class="fa-solid fa-location-dot text-rose-500 mr-1"></i> Location Address
+                    </p>
+                </div>
+                <button onclick="closeModal('detail-modal')" class="w-8 h-8 rounded-full bg-slate-200 hover:bg-slate-300 text-slate-600 flex items-center justify-center transition">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Modal Content (Scrollable) -->
+            <div class="p-6 overflow-y-auto space-y-6 flex-grow">
+                <!-- Gallery Showcase -->
+                <div class="space-y-3">
+                    <div class="relative h-72 sm:h-96 rounded-2xl overflow-hidden bg-slate-100">
+                        <img id="modal-main-img" src="" alt="Property" class="w-full h-full object-cover">
+                        <span id="modal-type-tag" class="absolute top-4 left-4 bg-navy-900/80 backdrop-blur-md text-white text-xs font-semibold px-3 py-1 rounded-full">Single Family</span>
+                        <span id="modal-price" class="absolute bottom-4 right-4 bg-brand-600 text-white text-lg font-bold px-4 py-2 rounded-xl shadow-lg">$0</span>
+                    </div>
+                    <!-- Thumbnails row -->
+                    <div id="modal-thumbnails" class="flex space-x-3 overflow-x-auto pb-2">
+                        <!-- Dynamic thumbnail buttons -->
+                    </div>
+                </div>
+
+                <!-- Spec Grid -->
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-200 text-center">
+                    <div>
+                        <span class="block text-xs text-slate-400 font-medium">Bedrooms</span>
+                        <span id="modal-beds" class="text-lg font-bold text-slate-800">0 Beds</span>
+                    </div>
+                    <div>
+                        <span class="block text-xs text-slate-400 font-medium">Bathrooms</span>
+                        <span id="modal-baths" class="text-lg font-bold text-slate-800">0 Baths</span>
+                    </div>
+                    <div>
+                        <span class="block text-xs text-slate-400 font-medium">Total Area</span>
+                        <span id="modal-sqft" class="text-lg font-bold text-slate-800">0 sq ft</span>
+                    </div>
+                    <div>
+                        <span class="block text-xs text-slate-400 font-medium">Year Built</span>
+                        <span id="modal-year" class="text-lg font-bold text-slate-800">2022</span>
+                    </div>
+                </div>
+
+                <!-- Description -->
+                <div>
+                    <h4 class="font-bold text-slate-800 text-base mb-2">About Property</h4>
+                    <p id="modal-desc" class="text-slate-600 text-sm leading-relaxed">Detailed property description will appear here...</p>
+                </div>
+
+                <!-- Key Amenities -->
+                <div>
+                    <h4 class="font-bold text-slate-800 text-base mb-3">Featured Amenities</h4>
+                    <div id="modal-amenities" class="flex flex-wrap gap-2">
+                        <!-- Dynamic amenity pills -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Footer Controls -->
+            <div class="px-6 py-4 bg-slate-50 border-t border-slate-200 flex flex-wrap items-center justify-between gap-3">
+                <div class="flex items-center space-x-2">
+                    <button id="modal-fav-btn" onclick="" class="px-4 py-2.5 rounded-xl border border-slate-300 text-slate-700 text-sm font-semibold hover:bg-slate-100 transition">
+                        <i class="fa-regular fa-heart text-rose-500 mr-1.5"></i> Bookmark
+                    </button>
+                    <button id="modal-compare-btn" onclick="" class="px-4 py-2.5 rounded-xl border border-slate-300 text-slate-700 text-sm font-semibold hover:bg-slate-100 transition">
+                        <i class="fa-solid fa-code-compare text-brand-600 mr-1.5"></i> Add to Compare
+                    </button>
+                </div>
+                <button id="modal-inquire-btn" onclick="" class="px-6 py-2.5 bg-brand-600 hover:bg-brand-500 text-white rounded-xl text-sm font-semibold shadow transition">
+                    <i class="fa-regular fa-paper-plane mr-1.5"></i> Contact Agent / Inquire
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- INTERACTIVE INQUIRY FORM MODAL -->
+    <div id="inquiry-modal" class="fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-sm flex items-center justify-center p-4 hidden opacity-0 transition-opacity">
+        <div class="bg-white w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden p-6 relative">
+            <button onclick="closeModal('inquiry-modal')" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 flex items-center justify-center">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div class="mb-4">
+                <span class="text-xs font-bold text-brand-600 uppercase tracking-wider">Direct Inquiry</span>
+                <h3 class="text-xl font-bold text-slate-900">Request Information</h3>
+                <p id="inquiry-prop-title" class="text-xs text-slate-500 font-medium mt-1">Property: ...</p>
+            </div>
+
+            <form id="inquiry-form" onsubmit="submitInquiry(event)" class="space-y-4">
+                <input type="hidden" id="inquiry-prop-id" value="">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Full Name *</label>
+                    <input type="text" required placeholder="John Doe" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Email Address *</label>
+                        <input type="email" required placeholder="john@example.com" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Phone Number</label>
+                        <input type="tel" placeholder="+1 (555) 000-0000" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Message / Inquiry Details</label>
+                    <textarea rows="3" placeholder="I would like to schedule a virtual tour or ask about pricing options..." class="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"></textarea>
+                </div>
+                <div class="pt-2">
+                    <button type="submit" class="w-full py-3 bg-brand-600 hover:bg-brand-500 text-white font-bold rounded-xl text-sm transition shadow-md">
+                        Submit Official Inquiry
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION CONTAINER -->
+    <div id="toast-container" class="fixed top-20 right-5 z-50 space-y-2 pointer-events-none"></div>
+
+    <!-- JAVASCRIPT APPLICATION LOGIC -->
+    <script>
+        /* -------------------------------------------------------------------------- */
+        /* MOCK PROPERTY DATASET                                                     */
+        /* -------------------------------------------------------------------------- */
+        const propertiesData = [
+            {
+                id: "prop-1",
+                title: "Grand Horizon Oceanfront Villa",
+                type: "Modern Villa",
+                price: 4850000,
+                location: "Miami, FL",
+                address: "450 Ocean Drive, Biscayne Bay",
+                beds: 5,
+                baths: 6,
+                sqft: 6200,
+                yearBuilt: 2023,
+                images: [
+                    "https://images.unsplash.com/photo-1613977257363-707ba9348227?auto=format&fit=crop&w=1000&q=80",
+                    "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80",
+                    "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=800&q=80"
+                ],
+                amenities: ["Swimming Pool", "Ocean View", "Smart Home Automation", "Private Garage", "Fitness Gym", "Elevator"],
+                description: "Luxurious waterfront estate boasting panoramic Biscayne Bay views, infinity edge pool, floor-to-ceiling glass, and custom Italian architectural finishes throughout.",
+                featured: true
+            },
+            {
+                id: "prop-2",
+                title: "Skyline Tower Penthouse",
+                type: "Penthouse",
+                price: 6200000,
+                location: "New York, NY",
+                address: "88 Wall Street, Manhattan",
+                beds: 4,
+                baths: 4.5,
+                sqft: 4500,
+                yearBuilt: 2022,
+                images: [
+                    "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=1000&q=80",
+                    "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=800&q=80",
+                    "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80"
+                ],
+                amenities: ["City View", "Private Terrace", "Smart Home Automation", "24/7 Concierge", "Wine Cellar"],
+                description: "Unrivaled Manhattan skyline vistas from this triplex penthouse featuring a private rooftop plunge pool, private elevator entry, and automated lighting.",
+                featured: true
+            },
+            {
+                id: "prop-3",
+                title: "Austin Hilltop Architectural Retreat",
+                type: "Single Family",
+                price: 2450000,
+                location: "Austin, TX",
+                address: "1204 Ridge View Dr, Westlake",
+                beds: 4,
+                baths: 3.5,
+                sqft: 3800,
+                yearBuilt: 2021,
+                images: [
+                    "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1000&q=80",
+                    "https://images.unsplash.com/photo-1600585152220-90363fe7e115?auto=format&fit=crop&w=800&q=80"
+                ],
+                amenities: ["Private Garden", "Swimming Pool", "Solar Energy", "Private Garage", "Fire Pit"],
+                description: "Modern organic architecture nested on a quiet Westlake ridge. Built with sustainable teak timber, high-efficiency solar systems, and seamless indoor-outdoor living.",
+                featured: false
+            },
+            {
+                id: "prop-4",
+                title: "The Glass House Condominium",
+                type: "Luxury Condominium",
+                price: 1850000,
+                location: "Los Angeles, CA",
+                address: "900 Wilshire Blvd, Downtown LA",
+                beds: 2,
+                baths: 2,
+                sqft: 1800,
+                yearBuilt: 2020,
+                images: [
+                    "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1000&q=80",
+                    "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80"
+                ],
+                amenities: ["Fitness Gym", "24/7 Concierge", "EV Charging", "Rooftop Lounge", "Smart Home Automation"],
+                description: "Sleek metropolitan living in Downtown LA. Features Italian quartz countertops, motorized window shades, and full access to private rooftop club amenities.",
+                featured: false
+            },
+            {
+                id: "prop-5",
+                title: "Emerald Bay Eco Luxury Manor",
+                type: "Modern Villa",
+                price: 8900000,
+                location: "Seattle, WA",
+                address: "310 Shoreline Way, Bellevue",
+                beds: 6,
+                baths: 7,
+                sqft: 7500,
+                yearBuilt: 2024,
+                images: [
+                    "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=1000&q=80",
+                    "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=800&q=80"
+                ],
+                amenities: ["Private Dock", "Swimming Pool", "Ocean View", "Private Garden", "Wine Cellar", "Sauna"],
+                description: "A private waterfront paradise complete with deep-water yacht dock, cedar sauna, heated outdoor pavilion, and state-of-the-art security.",
+                featured: true
+            },
+            {
+                id: "prop-6",
+                title: "SoHo Heritage Brick Townhouse",
+                type: "Townhouse",
+                price: 5400000,
+                location: "New York, NY",
+                address: "72 Spring Street, SoHo",
+                beds: 3,
+                baths: 3.5,
+                sqft: 3200,
+                yearBuilt: 1910,
+                images: [
+                    "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=1000&q=80",
+                    "https://images.unsplash.com/photo-1502005229762-cf1b2da7c5d6?auto=format&fit=crop&w=800&q=80"
+                ],
+                amenities: ["Private Garden", "Fireplace", "High Ceilings", "Smart Home Automation"],
+                description: "Classic historic SoHo charm expertly modernized. Original exposed brick, double-height ceilings, gourmet chef's kitchen, and a secluded private garden courtyard.",
+                featured: false
+            }
+        ];
+
+        /* -------------------------------------------------------------------------- */
+        /* STATE MANAGEMENT                                                          */
+        /* -------------------------------------------------------------------------- */
+        let state = {
+            favorites: new Set(),
+            compareList: new Set(),
+            activeBedsFilter: 'any',
+            currentModalPropertyId: null
+        };
+
+        /* -------------------------------------------------------------------------- */
+        /* INITIALIZATION                                                            */
+        /* -------------------------------------------------------------------------- */
+        window.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('total-listed-count').innerText = propertiesData.length;
+            renderListings(propertiesData);
+            updateCompareDock();
+        });
+
+        /* -------------------------------------------------------------------------- */
+        /* UI NAVIGATION & TABS                                                      */
+        /* -------------------------------------------------------------------------- */
+        function showSection(section) {
+            // Hide all sections
+            document.getElementById('section-listings').classList.add('hidden');
+            document.getElementById('section-comparison').classList.add('hidden');
+            document.getElementById('section-favorites').classList.add('hidden');
+
+            // Reset tab styles
+            const tabs = ['listings', 'comparison', 'favorites'];
+            tabs.forEach(t => {
+                const btn = document.getElementById(`tab-${t}`);
+                btn.className = "px-4 py-2 font-semibold text-sm rounded-lg text-slate-600 hover:bg-slate-100 transition relative";
+            });
+
+            // Activate current tab
+            const activeTab = document.getElementById(`tab-${section}`);
+            activeTab.className = "px-4 py-2 font-semibold text-sm rounded-lg text-brand-600 bg-brand-50 border border-brand-200 transition relative";
+
+            // Show section
+            document.getElementById(`section-${section}`).classList.remove('hidden');
+
+            if (section === 'comparison') {
+                renderComparisonMatrix();
+            } else if (section === 'favorites') {
+                renderFavorites();
+            }
+        }
+
+        /* -------------------------------------------------------------------------- */
+        /* RENDERING PROPERTY LISTINGS                                                */
+        /* -------------------------------------------------------------------------- */
+        function renderListings(items) {
+            const container = document.getElementById('listings-grid');
+            const noResults = document.getElementById('no-results');
+            document.getElementById('results-count').innerText = `${items.length} found`;
+
+            if (items.length === 0) {
+                container.innerHTML = '';
+                noResults.classList.remove('hidden');
+                return;
+            }
+            noResults.classList.add('hidden');
+
+            container.innerHTML = items.map(prop => {
+                const isFav = state.favorites.has(prop.id);
+                const isCompared = state.compareList.has(prop.id);
+
+                return `
+                <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col group">
+                    <!-- Image Card Header -->
+                    <div class="relative h-52 overflow-hidden bg-slate-100">
+                        <img src="${prop.images[0]}" alt="${prop.title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                        
+                        <div class="absolute top-3 left-3 flex flex-col gap-1">
+                            <span class="bg-navy-900/80 backdrop-blur-md text-white text-xs font-bold px-2.5 py-1 rounded-full">
+                                ${prop.type}
+                            </span>
+                            ${prop.featured ? '<span class="bg-amber-500 text-white text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full shadow">Featured</span>' : ''}
+                        </div>
+
+                        <!-- Action Badges (Fav/Compare) -->
+                        <div class="absolute top-3 right-3 flex space-x-1.5">
+                            <button onclick="toggleFavorite('${prop.id}')" title="Save Favorite" class="w-9 h-9 rounded-full ${isFav ? 'bg-rose-500 text-white' : 'bg-white/80 text-slate-700 hover:bg-white'} backdrop-blur-md flex items-center justify-center transition shadow-sm">
+                                <i class="fa-${isFav ? 'solid' : 'regular'} fa-heart"></i>
+                            </button>
+                            <button onclick="toggleCompare('${prop.id}')" title="Compare Property" class="w-9 h-9 rounded-full ${isCompared ? 'bg-brand-600 text-white' : 'bg-white/80 text-slate-700 hover:bg-white'} backdrop-blur-md flex items-center justify-center transition shadow-sm">
+                                <i class="fa-solid fa-code-compare"></i>
+                            </button>
+                        </div>
+
+                        <div class="absolute bottom-3 left-3 bg-white/90 backdrop-blur-md px-3 py-1 rounded-xl shadow-sm">
+                            <span class="text-xs text-slate-500 font-medium">Price</span>
+                            <p class="text-base font-extrabold text-brand-800">$${prop.price.toLocaleString()}</p>
+                        </div>
+                    </div>
+
+                    <!-- Card Body -->
+                    <div class="p-4 flex-grow flex flex-col justify-between space-y-3">
+                        <div>
+                            <p class="text-xs font-semibold text-slate-400 flex items-center">
+                                <i class="fa-solid fa-location-dot text-rose-500 mr-1"></i> ${prop.location}
+                            </p>
+                            <h3 onclick="openDetailModal('${prop.id}')" class="font-bold text-slate-800 text-base line-clamp-1 hover:text-brand-600 cursor-pointer transition mt-0.5">
+                                ${prop.title}
+                            </h3>
+                        </div>
+
+                        <!-- Spec Quick Badges -->
+                        <div class="grid grid-cols-3 gap-2 py-2 border-y border-slate-100 text-slate-600 text-xs">
+                            <div class="flex items-center space-x-1">
+                                <i class="fa-solid fa-bed text-brand-500"></i>
+                                <span>${prop.beds} Beds</span>
+                            </div>
+                            <div class="flex items-center space-x-1">
+                                <i class="fa-solid fa-bath text-brand-500"></i>
+                                <span>${prop.baths} Baths</span>
+                            </div>
+                            <div class="flex items-center space-x-1">
+                                <i class="fa-solid fa-ruler-combined text-brand-500"></i>
+                                <span>${prop.sqft.toLocaleString()} sqft</span>
+                            </div>
+                        </div>
+
+                        <!-- Footer Actions -->
+                        <div class="pt-1 flex items-center justify-between gap-2">
+                            <button onclick="openDetailModal('${prop.id}')" class="flex-grow py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl text-xs transition">
+                                View Specs
+                            </button>
+                            <button onclick="openInquiryModal('${prop.id}')" class="px-3 py-2 bg-brand-600 hover:bg-brand-500 text-white rounded-xl text-xs font-semibold transition flex items-center space-x-1">
+                                <i class="fa-regular fa-envelope"></i>
+                                <span>Inquire</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                `;
+            }).join('');
+        }
+
+        /* -------------------------------------------------------------------------- */
+        /* FILTER & SEARCH LOGIC                                                     */
+        /* -------------------------------------------------------------------------- */
+        function applyFilters() {
+            const keyword = document.getElementById('search-keyword').value.toLowerCase();
+            const location = document.getElementById('filter-location').value;
+            const type = document.getElementById('filter-type').value;
+            const maxPrice = parseFloat(document.getElementById('filter-max-price').value);
+            const minSize = parseFloat(document.getElementById('filter-min-size').value);
+            const sortOrder = document.getElementById('sort-order').value;
+
+            // Selected Amenity Checkboxes
+            const selectedAmenities = Array.from(document.querySelectorAll('.amenity-checkbox:checked')).map(cb => cb.value);
+
+            let filtered = propertiesData.filter(prop => {
+                // Keyword
+                const matchesKeyword = prop.title.toLowerCase().includes(keyword) || 
+                                       prop.address.toLowerCase().includes(keyword) || 
+                                       prop.location.toLowerCase().includes(keyword);
+                
+                // Location & Type
+                const matchesLoc = location === 'all' || prop.location === location;
+                const matchesType = type === 'all' || prop.type === type;
+
+                // Price & Size
+                const matchesPrice = prop.price <= maxPrice;
+                const matchesSize = prop.sqft >= minSize;
+
+                // Bedrooms
+                let matchesBeds = true;
+                if (state.activeBedsFilter !== 'any') {
+                    matchesBeds = prop.beds >= parseInt(state.activeBedsFilter);
+                }
+
+                // Amenities
+                const matchesAmenities = selectedAmenities.every(a => prop.amenities.includes(a));
+
+                return matchesKeyword && matchesLoc && matchesType && matchesPrice && matchesSize && matchesBeds && matchesAmenities;
+            });
+
+            // Sorting logic
+            if (sortOrder === 'price-asc') {
+                filtered.sort((a, b) => a.price - b.price);
+            } else if (sortOrder === 'price-desc') {
+                filtered.sort((a, b) => b.price - a.price);
+            } else if (sortOrder === 'size-desc') {
+                filtered.sort((a, b) => b.sqft - a.sqft);
+            } else { // 'featured'
+                filtered.sort((a, b) => (b.featured === a.featured) ? 0 : b.featured ? 1 : -1);
+            }
+
+            renderListings(filtered);
+        }
+
+        function setBedsFilter(beds) {
+            state.activeBedsFilter = beds;
+            document.querySelectorAll('.bed-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            applyFilters();
+        }
+
+        function updatePriceLabel(val) {
+            document.getElementById('price-val-display').innerText = `$${parseInt(val).toLocaleString()}`;
+        }
+
+        function resetFilters() {
+            document.getElementById('search-keyword').value = '';
+            document.getElementById('filter-location').value = 'all';
+            document.getElementById('filter-type').value = 'all';
+            document.getElementById('filter-max-price').value = 15000000;
+            document.getElementById('price-val-display').innerText = '$15,000,000';
+            document.getElementById('filter-min-size').value = '0';
+            document.querySelectorAll('.amenity-checkbox').forEach(cb => cb.checked = false);
+            
+            state.activeBedsFilter = 'any';
+            document.querySelectorAll('.bed-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.bed-btn')[0].classList.add('active');
+
+            applyFilters();
+            showToast('Filters reset to default');
+        }
+
+        /* -------------------------------------------------------------------------- */
+        /* FAVORITES MANAGEMENT                                                      */
+        /* -------------------------------------------------------------------------- */
+        function toggleFavorite(id) {
+            if (state.favorites.has(id)) {
+                state.favorites.delete(id);
+                showToast('Removed from saved bookmarks');
+            } else {
+                state.favorites.add(id);
+                showToast('Property saved to bookmarks!', 'success');
+            }
+            document.getElementById('fav-count').innerText = state.favorites.size;
+            applyFilters();
+            if (!document.getElementById('section-favorites').classList.contains('hidden')) {
+                renderFavorites();
+            }
+        }
+
+        function renderFavorites() {
+            const container = document.getElementById('favorites-grid');
+            const emptyState = document.getElementById('empty-favorites');
+            const favItems = propertiesData.filter(p => state.favorites.has(p.id));
+
+            if (favItems.length === 0) {
+                container.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
+            emptyState.classList.add('hidden');
+            
+            container.innerHTML = favItems.map(prop => `
+                <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm p-4 flex space-x-4 items-center">
+                    <img src="${prop.images[0]}" alt="${prop.title}" class="w-24 h-24 object-cover rounded-xl">
+                    <div class="flex-grow">
+                        <span class="text-[10px] font-bold text-brand-600 uppercase">${prop.type}</span>
+                        <h4 class="font-bold text-slate-800 text-sm line-clamp-1">${prop.title}</h4>
+                        <p class="text-xs text-slate-500">${prop.location}</p>
+                        <p class="text-sm font-extrabold text-brand-800 mt-1">$${prop.price.toLocaleString()}</p>
+                    </div>
+                    <div class="flex flex-col space-y-2">
+                        <button onclick="openDetailModal('${prop.id}')" class="p-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs" title="View Detail">
+                            <i class="fa-solid fa-eye"></i>
+                        </button>
+                        <button onclick="toggleFavorite('${prop.id}')" class="p-2 bg-rose-50 text-rose-600 hover:bg-rose-100 rounded-lg text-xs" title="Remove Favorite">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        /* -------------------------------------------------------------------------- */
+        /* COMPARISON MATRIX TOOL                                                    */
+        /* -------------------------------------------------------------------------- */
+        function toggleCompare(id) {
+            if (state.compareList.has(id)) {
+                state.compareList.delete(id);
+                showToast('Removed from comparison');
+            } else {
+                if (state.compareList.size >= 4) {
+                    showToast('Maximum 4 properties can be compared at once', 'error');
+                    return;
+                }
+                state.compareList.add(id);
+                showToast('Added to comparison tool!', 'success');
+            }
+            updateCompareDock();
+            applyFilters();
+            if (!document.getElementById('section-comparison').classList.contains('hidden')) {
+                renderComparisonMatrix();
+            }
+        }
+
+        function clearComparison() {
+            state.compareList.clear();
+            updateCompareDock();
+            applyFilters();
+            renderComparisonMatrix();
+            showToast('Comparison tray cleared');
+        }
+
+        function updateCompareDock() {
+            const count = state.compareList.size;
+            document.getElementById('compare-count').innerText = count;
+            document.getElementById('dock-count').innerText = count;
+            document.getElementById('tab-compare-badge').innerText = count;
+
+            if (count > 0) {
+                document.getElementById('tab-compare-badge').classList.remove('hidden');
+            } else {
+                document.getElementById('tab-compare-badge').classList.add('hidden');
+            }
+
+            // Render Dock Thumbnails
+            const dockContainer = document.getElementById('dock-thumbnails');
+            const items = propertiesData.filter(p => state.compareList.has(p.id));
+
+            dockContainer.innerHTML = items.map(p => `
+                <div class="flex items-center space-x-2 bg-slate-800/80 p-1.5 rounded-xl border border-slate-700 relative group">
+                    <img src="${p.images[0]}" class="w-10 h-10 object-cover rounded-lg">
+                    <div class="overflow-hidden">
+                        <p class="text-xs font-bold truncate text-white">${p.title}</p>
+                        <p class="text-[10px] text-brand-300 font-semibold">$${(p.price/1000000).toFixed(2)}M</p>
+                    </div>
+                    <button onclick="toggleCompare('${p.id}')" class="absolute -top-1 -right-1 bg-rose-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-[10px] shadow">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+            `).join('');
+
+            // Automatically show dock if items > 0
+            if (count > 0) {
+                toggleCompareBar(true);
+            } else {
+                toggleCompareBar(false);
+            }
+        }
+
+        function toggleCompareBar(show = null) {
+            const dock = document.getElementById('compare-dock');
+            const isHidden = dock.classList.contains('opacity-0');
+            
+            const shouldShow = show !== null ? show : isHidden;
+
+            if (shouldShow && state.compareList.size > 0) {
+                dock.classList.remove('translate-y-32', 'opacity-0', 'pointer-events-none');
+            } else {
+                dock.classList.add('translate-y-32', 'opacity-0', 'pointer-events-none');
+            }
+        }
+
+        function renderComparisonMatrix() {
+            const container = document.getElementById('comparison-matrix-container');
+            const items = propertiesData.filter(p => state.compareList.has(p.id));
+
+            if (items.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-16 px-4">
+                        <i class="fa-solid fa-code-compare text-4xl text-slate-300 mb-3"></i>
+                        <h3 class="text-lg font-bold text-slate-700">No properties selected for comparison</h3>
+                        <p class="text-sm text-slate-500 max-w-sm mx-auto mt-1">Select up to 4 properties using the compare icon on property cards.</p>
+                        <button onclick="showSection('listings')" class="mt-4 px-4 py-2 bg-brand-600 text-white rounded-xl text-sm font-semibold">Browse Listings</button>
+                    </div>
+                `;
+                return;
+            }
+
+            // Gather all unique amenities across selected items
+            const allAmenities = Array.from(new Set(items.flatMap(i => i.amenities)));
+
+            let html = `
+                <table class="w-full text-left border-collapse min-w-[700px]">
+                    <thead>
+                        <tr class="border-b border-slate-200 bg-slate-50">
+                            <th class="p-4 w-48 text-xs font-bold text-slate-500 uppercase tracking-wider">Property Specification</th>
+                            ${items.map(p => `
+                                <th class="p-4 w-64 align-top">
+                                    <div class="space-y-2 relative">
+                                        <button onclick="toggleCompare('${p.id}')" class="absolute top-0 right-0 text-slate-400 hover:text-rose-500">
+                                            <i class="fa-solid fa-xmark text-base"></i>
+                                        </button>
+                                        <img src="${p.images[0]}" class="w-full h-32 object-cover rounded-xl shadow-sm">
+                                        <h4 class="font-bold text-slate-800 text-sm line-clamp-1">${p.title}</h4>
+                                        <p class="text-base font-extrabold text-brand-800">$${p.price.toLocaleString()}</p>
+                                        <button onclick="openInquiryModal('${p.id}')" class="w-full py-1.5 bg-brand-600 hover:bg-brand-500 text-white text-xs font-semibold rounded-lg shadow-sm">
+                                            Inquire
+                                        </button>
+                                    </div>
+                                </th>
+                            `).join('')}
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 text-sm">
+                        <!-- Location Row -->
+                        <tr>
+                            <td class="p-4 font-semibold text-slate-500 bg-slate-50/50">Location & Address</td>
+                            ${items.map(p => `<td class="p-4 text-slate-800 font-medium">${p.location}<br><span class="text-xs text-slate-400">${p.address}</span></td>`).join('')}
+                        </tr>
+                        <!-- Type -->
+                        <tr>
+                            <td class="p-4 font-semibold text-slate-500 bg-slate-50/50">Property Type</td>
+                            ${items.map(p => `<td class="p-4 text-slate-800">${p.type}</td>`).join('')}
+                        </tr>
+                        <!-- Bedrooms -->
+                        <tr>
+                            <td class="p-4 font-semibold text-slate-500 bg-slate-50/50">Bedrooms</td>
+                            ${items.map(p => `<td class="p-4 font-bold text-slate-800">${p.beds} Beds</td>`).join('')}
+                        </tr>
+                        <!-- Bathrooms -->
+                        <tr>
+                            <td class="p-4 font-semibold text-slate-500 bg-slate-50/50">Bathrooms</td>
+                            ${items.map(p => `<td class="p-4 font-bold text-slate-800">${p.baths} Baths</td>`).join('')}
+                        </tr>
+                        <!-- Size -->
+                        <tr>
+                            <td class="p-4 font-semibold text-slate-500 bg-slate-50/50">Total Size</td>
+                            ${items.map(p => `<td class="p-4 font-bold text-slate-800">${p.sqft.toLocaleString()} sq ft</td>`).join('')}
+                        </tr>
+                        <!-- Price per SqFt -->
+                        <tr>
+                            <td class="p-4 font-semibold text-slate-500 bg-slate-50/50">Est. Price / SqFt</td>
+                            ${items.map(p => `<td class="p-4 text-brand-700 font-semibold">$${Math.round(p.price / p.sqft).toLocaleString()}/sqft</td>`).join('')}
+                        </tr>
+                        <!-- Year Built -->
+                        <tr>
+                            <td class="p-4 font-semibold text-slate-500 bg-slate-50/50">Year Built</td>
+                            ${items.map(p => `<td class="p-4 text-slate-800">${p.yearBuilt}</td>`).join('')}
+                        </tr>
+                        <!-- Amenities Checklist Header -->
+                        <tr class="bg-slate-100">
+                            <td colspan="${items.length + 1}" class="p-3 font-bold text-xs uppercase tracking-wider text-slate-600">Feature Comparison matrix</td>
+                        </tr>
+                        ${allAmenities.map(amenity => `
+                            <tr>
+                                <td class="p-4 font-medium text-slate-600 bg-slate-50/50">${amenity}</td>
+                                ${items.map(p => {
+                                    const hasIt = p.amenities.includes(amenity);
+                                    return `
+                                        <td class="p-4">
+                                            ${hasIt 
+                                                ? '<span class="inline-flex items-center text-emerald-600 font-semibold text-xs"><i class="fa-solid fa-circle-check mr-1.5 text-sm"></i> Included</span>' 
+                                                : '<span class="inline-flex items-center text-slate-300 text-xs"><i class="fa-solid fa-circle-minus mr-1.5 text-sm"></i> Not included</span>'
+                                            }
+                                        </td>
+                                    `;
+                                }).join('')}
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+
+            container.innerHTML = html;
+        }
+
+        /* -------------------------------------------------------------------------- */
+        /* MODAL POPUPS                                                               */
+        /* -------------------------------------------------------------------------- */
+        function openDetailModal(id) {
+            const prop = propertiesData.find(p => p.id === id);
+            if (!prop) return;
+
+            state.currentModalPropertyId = id;
+
+            document.getElementById('modal-title').innerText = prop.title;
+            document.getElementById('modal-location').innerHTML = `<i class="fa-solid fa-location-dot text-rose-500 mr-1"></i> ${prop.address}, ${prop.location}`;
+            document.getElementById('modal-main-img').src = prop.images[0];
+            document.getElementById('modal-type-tag').innerText = prop.type;
+            document.getElementById('modal-price').innerText = `$${prop.price.toLocaleString()}`;
+
+            document.getElementById('modal-beds').innerText = `${prop.beds} Beds`;
+            document.getElementById('modal-baths').innerText = `${prop.baths} Baths`;
+            document.getElementById('modal-sqft').innerText = `${prop.sqft.toLocaleString()} sq ft`;
+            document.getElementById('modal-year').innerText = prop.yearBuilt;
+            document.getElementById('modal-desc').innerText = prop.description;
+
+            // Gallery Thumbnails
+            const thumbContainer = document.getElementById('modal-thumbnails');
+            thumbContainer.innerHTML = prop.images.map((img, idx) => `
+                <img src="${img}" onclick="document.getElementById('modal-main-img').src='${img}'" class="w-20 h-16 object-cover rounded-xl cursor-pointer hover:opacity-80 border-2 border-transparent hover:border-brand-500 transition">
+            `).join('');
+
+            // Amenities Pills
+            const amenContainer = document.getElementById('modal-amenities');
+            amenContainer.innerHTML = prop.amenities.map(a => `
+                <span class="px-3 py-1 bg-brand-50 text-brand-700 rounded-full text-xs font-semibold border border-brand-100 flex items-center">
+                    <i class="fa-solid fa-check text-brand-500 mr-1.5"></i> ${a}
+                </span>
+            `).join('');
+
+            // Update footer actions
+            document.getElementById('modal-fav-btn').onclick = () => { toggleFavorite(id); };
+            document.getElementById('modal-compare-btn').onclick = () => { toggleCompare(id); };
+            document.getElementById('modal-inquire-btn').onclick = () => { closeModal('detail-modal'); openInquiryModal(id); };
+
+            showModal('detail-modal');
+        }
+
+        function openInquiryModal(id) {
+            const prop = propertiesData.find(p => p.id === id);
+            if (!prop) return;
+
+            document.getElementById('inquiry-prop-id').value = id;
+            document.getElementById('inquiry-prop-title').innerText = `Property: ${prop.title} ($${prop.price.toLocaleString()})`;
+
+            showModal('inquiry-modal');
+        }
+
+        function submitInquiry(e) {
+            e.preventDefault();
+            closeModal('inquiry-modal');
+            showToast('Inquiry submitted successfully! An agent will respond shortly.', 'success');
+            document.getElementById('inquiry-form').reset();
+        }
+
+        function showModal(modalId) {
+            const modal = document.getElementById(modalId);
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+            }, 10);
+        }
+
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            modal.classList.add('opacity-0');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 200);
+        }
+
+        /* -------------------------------------------------------------------------- */
+        /* TOAST NOTIFICATION SYSTEM                                                 */
+        /* -------------------------------------------------------------------------- */
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            
+            let bg = 'bg-slate-900 text-white';
+            let icon = '<i class="fa-solid fa-circle-info text-brand-400 mr-2"></i>';
+
+            if (type === 'success') {
+                bg = 'bg-emerald-900 text-white';
+                icon = '<i class="fa-solid fa-circle-check text-emerald-400 mr-2"></i>';
+            } else if (type === 'error') {
+                bg = 'bg-rose-900 text-white';
+                icon = '<i class="fa-solid fa-triangle-exclamation text-rose-400 mr-2"></i>';
+            }
+
+            toast.className = `${bg} px-4 py-3 rounded-xl shadow-2xl text-xs font-semibold flex items-center transform transition-all duration-300 translate-y-2 opacity-0 pointer-events-auto max-w-sm`;
+            toast.innerHTML = `${icon} <span>${message}</span>`;
+
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.classList.remove('translate-y-2', 'opacity-0');
+            }, 10);
+
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-2');
+                setTimeout(() => {
+                    toast.remove();
+                }, 300);
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
